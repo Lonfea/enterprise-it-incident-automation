@@ -1,0 +1,20 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - incident-data:/app/data-store
+    environment:
+      DATABASE_URL: sqlite:////app/data-store/incidents.db
+  dashboard:
+    build: .
+    command: streamlit run dashboard/app.py --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - incident-data:/app/data-store
+    environment:
+      DATABASE_URL: sqlite:////app/data-store/incidents.db
+volumes:
+  incident-data:
