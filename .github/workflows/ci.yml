@@ -17,5 +17,6 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: pytest -q
+      - run: python scripts/evaluate.py --output evaluation/report.json
       - run: python -m src.pipeline --input data/sample_system.log
       - run: python -c "from src.api import app; assert app.title == 'IT Incident Automation API'"
