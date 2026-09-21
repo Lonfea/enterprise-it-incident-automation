@@ -1,0 +1,62 @@
+[
+  {
+    "id": "RB-AUTH-001",
+    "category": "authentication",
+    "title": "Authentication failures and access denials",
+    "symptoms": ["login denied", "invalid token", "permission failure", "repeated authentication errors"],
+    "actions": [
+      "Confirm the affected identity, application and authentication provider.",
+      "Check recent token, certificate or access-policy changes.",
+      "Review failed-login volume and source patterns before changing access controls."
+    ],
+    "safeguards": ["Do not reset credentials or revoke access without human approval."]
+  },
+  {
+    "id": "RB-DB-001",
+    "category": "database",
+    "title": "Database connectivity and transaction failures",
+    "symptoms": ["database timeout", "connection pool exhausted", "deadlock", "SQL failure"],
+    "actions": [
+      "Check database availability, connection-pool saturation and recent deployments.",
+      "Inspect slow queries, lock contention and retry rates.",
+      "Validate recovery using a read-only health query before closing the incident."
+    ],
+    "safeguards": ["Require approval before failover, restart or transaction termination."]
+  },
+  {
+    "id": "RB-NET-001",
+    "category": "network",
+    "title": "Network timeout and reachability investigation",
+    "symptoms": ["network timeout", "DNS error", "socket failure", "host unreachable"],
+    "actions": [
+      "Confirm whether the failure is isolated to one service, zone or dependency.",
+      "Check DNS resolution, endpoint health and recent firewall or routing changes.",
+      "Compare error rates and latency with the previous healthy period."
+    ],
+    "safeguards": ["Require approval before routing, firewall or load-balancer changes."]
+  },
+  {
+    "id": "RB-STORAGE-001",
+    "category": "storage",
+    "title": "Storage capacity and HDFS failures",
+    "symptoms": ["disk full", "HDFS block failure", "volume unavailable", "storage capacity"],
+    "actions": [
+      "Check capacity, inode usage, replication status and affected volumes.",
+      "Identify rapid growth, failed jobs or unavailable storage nodes.",
+      "Preserve evidence and confirm redundancy before cleanup or rebalancing."
+    ],
+    "safeguards": ["Never delete data automatically; cleanup requires human approval."]
+  },
+  {
+    "id": "RB-APP-001",
+    "category": "application",
+    "title": "Application error and service degradation",
+    "symptoms": ["application error", "service unavailable", "unexpected exception", "deployment failure"],
+    "actions": [
+      "Correlate the error with deployments, configuration changes and dependency health.",
+      "Review exception frequency, affected endpoints and customer impact.",
+      "Validate a rollback or restart plan and its success criteria."
+    ],
+    "safeguards": ["Rollback and restart actions require human approval."]
+  }
+]
