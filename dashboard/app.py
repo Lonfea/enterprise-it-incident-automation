@@ -12,6 +12,7 @@ st.caption("Automated anomaly detection, incident routing and SLA monitoring")
 engine = create_engine(os.getenv("DATABASE_URL", "sqlite:///incidents.db"))
 try:
     incidents = pd.read_sql("SELECT * FROM incidents ORDER BY created_at DESC", engine)
+    actions = pd.read_sql("SELECT * FROM action_proposals ORDER BY requested_at DESC", engine)
 except Exception:
     st.info("Run `python -m src.pipeline --input data/sample_system.log` to create incidents.")
     st.stop()
@@ -23,11 +24,12 @@ if incidents.empty:
 incidents["sla_deadline"] = pd.to_datetime(incidents["sla_deadline"], utc=True)
 incidents["sla_breached"] = (incidents["status"] != "resolved") & (incidents["sla_deadline"] < datetime.now(timezone.utc))
 
-c1, c2, c3, c4 = st.columns(4)
+c1, c2, c3, c4, c5 = st.columns(5)
 c1.metric("Open incidents", int((incidents.status != "resolved").sum()))
 c2.metric("Critical P1", int((incidents.priority == "P1").sum()))
 c3.metric("SLA breaches", int(incidents.sla_breached.sum()))
 c4.metric("Services affected", incidents.service.nunique())
+c5.metric("Pending approvals", int((actions.status == "pending").sum()) if not actions.empty else 0)
 
 left, right = st.columns(2)
 left.subheader("Incidents by priority")
@@ -41,3 +43,13 @@ st.dataframe(
     use_container_width=True,
     hide_index=True,
 )
+
+st.subheader("Human approval queue")
+if actions.empty:
+    st.caption("No remediation actions are awaiting approval.")
+else:
+    st.dataframe(
+        actions[["id", "incident_id", "status", "action", "rationale", "requested_by", "requested_at"]],
+        use_container_width=True,
+        hide_index=True,
+    )
