@@ -1,0 +1,80 @@
+{
+  "dataset": "curated portfolio validation scenarios",
+  "cases": 10,
+  "routing_accuracy": 1.0,
+  "priority_accuracy": 1.0,
+  "runbook_retrieval_accuracy": 1.0,
+  "production_benchmark": false,
+  "details": [
+    {
+      "message": "Repeated login denied after token refresh",
+      "category": "authentication",
+      "priority": "P2",
+      "runbook_id": "RB-AUTH-001",
+      "passed": true
+    },
+    {
+      "message": "Permission denied for service account",
+      "category": "authentication",
+      "priority": "P1",
+      "runbook_id": "RB-AUTH-001",
+      "passed": true
+    },
+    {
+      "message": "Database connection pool exhausted",
+      "category": "database",
+      "priority": "P2",
+      "runbook_id": "RB-DB-001",
+      "passed": true
+    },
+    {
+      "message": "SQL deadlock detected",
+      "category": "database",
+      "priority": "P2",
+      "runbook_id": "RB-DB-001",
+      "passed": true
+    },
+    {
+      "message": "Network timeout contacting dependency",
+      "category": "network",
+      "priority": "P2",
+      "runbook_id": "RB-NET-001",
+      "passed": true
+    },
+    {
+      "message": "Host unreachable after DNS lookup",
+      "category": "network",
+      "priority": "P1",
+      "runbook_id": "RB-NET-001",
+      "passed": true
+    },
+    {
+      "message": "Storage volume unavailable",
+      "category": "storage",
+      "priority": "P2",
+      "runbook_id": "RB-STORAGE-001",
+      "passed": true
+    },
+    {
+      "message": "Disk capacity above threshold",
+      "category": "storage",
+      "priority": "P3",
+      "runbook_id": "RB-STORAGE-001",
+      "passed": true
+    },
+    {
+      "message": "Unexpected application exception",
+      "category": "application",
+      "priority": "P2",
+      "runbook_id": "RB-APP-001",
+      "passed": true
+    },
+    {
+      "message": "Service unavailable after deployment",
+      "category": "application",
+      "priority": "P1",
+      "runbook_id": "RB-APP-001",
+      "passed": true
+    }
+  ]
+}
