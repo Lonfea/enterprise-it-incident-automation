@@ -1,20 +1,35 @@
 services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: incidents
+      POSTGRES_USER: incident
+      POSTGRES_PASSWORD: incident-local-only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U incident -d incidents"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
   api:
     build: .
     ports:
       - "8000:8000"
-    volumes:
-      - incident-data:/app/data-store
     environment:
-      DATABASE_URL: sqlite:////app/data-store/incidents.db
+      DATABASE_URL: postgresql+psycopg://incident:incident-local-only@db:5432/incidents
+    depends_on:
+      db:
+        condition: service_healthy
   dashboard:
     build: .
     command: streamlit run dashboard/app.py --server.address=0.0.0.0
     ports:
       - "8501:8501"
-    volumes:
-      - incident-data:/app/data-store
     environment:
-      DATABASE_URL: sqlite:////app/data-store/incidents.db
+      DATABASE_URL: postgresql+psycopg://incident:incident-local-only@db:5432/incidents
+    depends_on:
+      db:
+        condition: service_healthy
 volumes:
-  incident-data:
+  postgres-data:
