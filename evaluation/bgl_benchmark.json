@@ -1,0 +1,64 @@
+{
+  "dataset": "LogHub BGL_2k (Blue Gene/L RAS logs, line-level labels)",
+  "source": "https://raw.githubusercontent.com/logpai/loghub/master/BGL/BGL_2k.log",
+  "lines": 2000,
+  "labelled_anomalies": 143,
+  "protocol": "chronological split; feedback learned on first half, all scores on second half",
+  "test_lines": 1000,
+  "test_anomalies": 47,
+  "reviewed_alerts_in_history": 219,
+  "suppressed_templates": 15,
+  "caveat": "rule refinements were informed by error analysis on this same sample",
+  "results": {
+    "v1 detector (rules OR isolation forest)": {
+      "alerts": 333,
+      "true_positives": 47,
+      "false_positives": 286,
+      "missed_anomalies": 0,
+      "precision": 0.141,
+      "recall": 1.0,
+      "f1": 0.247,
+      "distinct_alert_templates": 88
+    },
+    "isolation forest only": {
+      "alerts": 37,
+      "true_positives": 6,
+      "false_positives": 31,
+      "missed_anomalies": 41,
+      "precision": 0.162,
+      "recall": 0.128,
+      "f1": 0.143,
+      "distinct_alert_templates": 17
+    },
+    "refined rules only": {
+      "alerts": 176,
+      "true_positives": 47,
+      "false_positives": 129,
+      "missed_anomalies": 0,
+      "precision": 0.267,
+      "recall": 1.0,
+      "f1": 0.422,
+      "distinct_alert_templates": 65
+    },
+    "current detector (refined rules OR gated isolation forest)": {
+      "alerts": 178,
+      "true_positives": 47,
+      "false_positives": 131,
+      "missed_anomalies": 0,
+      "precision": 0.264,
+      "recall": 1.0,
+      "f1": 0.418,
+      "distinct_alert_templates": 67
+    },
+    "current detector + operator feedback": {
+      "alerts": 178,
+      "true_positives": 47,
+      "false_positives": 131,
+      "missed_anomalies": 0,
+      "precision": 0.264,
+      "recall": 1.0,
+      "f1": 0.418,
+      "distinct_alert_templates": 67
+    }
+  }
+}

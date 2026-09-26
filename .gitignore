@@ -6,3 +6,4 @@ __pycache__/
 incidents.db
 .env
 data/HDFS_*.log
+data/BGL_*.log
