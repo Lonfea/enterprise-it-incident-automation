@@ -10,7 +10,8 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from .database import ActionProposal, AuditEvent, Incident, SessionLocal, init_db
+from .core import template_of
+from .database import ActionProposal, AuditEvent, Incident, IncidentFeedback, SessionLocal, init_db
 from .guidance import retrieve_guidance
 
 
@@ -63,6 +64,21 @@ class ActionDecision(BaseModel):
     decision: Literal["approved", "rejected"]
     decided_by: str = Field(min_length=2, max_length=100)
     reason: str = Field(min_length=3, max_length=1000)
+
+
+class FeedbackRequest(BaseModel):
+    verdict: Literal["true_positive", "false_positive"]
+    actor: str = Field(min_length=2, max_length=100)
+
+
+class FeedbackView(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: int
+    incident_id: int
+    template: str
+    verdict: str
+    actor: str
+    created_at: datetime
 
 
 class ActionView(BaseModel):
@@ -143,6 +159,33 @@ def incident_guidance(incident_id: int, db: Session = Depends(get_db)):
         }
     )
     return guidance.to_dict()
+
+
+@app.post("/incidents/{incident_id}/feedback", response_model=FeedbackView, status_code=201)
+def record_feedback(incident_id: int, request: FeedbackRequest, db: Session = Depends(get_db)):
+    """Record whether an incident was real; repeated false positives suppress its template."""
+    incident = db.get(Incident, incident_id)
+    if not incident:
+        raise HTTPException(status_code=404, detail="Incident not found")
+    feedback = IncidentFeedback(
+        incident_id=incident.id,
+        template=template_of(incident.message),
+        verdict=request.verdict,
+        actor=request.actor,
+    )
+    db.add(feedback)
+    db.flush()
+    db.add(
+        AuditEvent(
+            incident_id=incident.id,
+            event_type="incident_feedback",
+            actor=request.actor,
+            details=json.dumps({"verdict": request.verdict}),
+        )
+    )
+    db.commit()
+    db.refresh(feedback)
+    return feedback
 
 
 @app.get("/actions", response_model=list[ActionView])

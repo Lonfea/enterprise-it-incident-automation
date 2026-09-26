@@ -66,5 +66,20 @@ class AuditEvent(Base):
     )
 
 
+class IncidentFeedback(Base):
+    """Operator verdict on whether an incident was a real problem."""
+
+    __tablename__ = "incident_feedback"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    incident_id: Mapped[int] = mapped_column(ForeignKey("incidents.id"), index=True)
+    template: Mapped[str] = mapped_column(Text, index=True)
+    verdict: Mapped[str] = mapped_column(String(20))
+    actor: Mapped[str] = mapped_column(String(100))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
+    )
+
+
 def init_db() -> None:
     Base.metadata.create_all(engine)

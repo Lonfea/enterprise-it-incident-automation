@@ -65,3 +65,15 @@ def test_guidance_and_human_approval_flow(client):
     audit = client.get("/audit-events")
     assert audit.status_code == 200
     assert [event["event_type"] for event in audit.json()] == ["action_approved", "action_proposed"]
+
+
+def test_feedback_is_recorded_with_template_and_audited(client):
+    response = client.post("/incidents/1/feedback", json={"verdict": "false_positive", "actor": "sre-oncall"})
+    assert response.status_code == 201
+    assert response.json()["template"] == "Database connection pool exhausted"
+    assert client.get("/audit-events").json()[0]["event_type"] == "incident_feedback"
+
+
+def test_feedback_validation_and_missing_incident(client):
+    assert client.post("/incidents/1/feedback", json={"verdict": "maybe", "actor": "sre"}).status_code == 422
+    assert client.post("/incidents/99/feedback", json={"verdict": "true_positive", "actor": "sre"}).status_code == 404
